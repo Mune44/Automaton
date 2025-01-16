@@ -28,8 +28,8 @@ record _∧_ A B : Set where
 open _∧_
 
 ex3' : {A B : Set} → ( A ∨ B ) →   A ∧ B   -- this is wrong
-ex3' (case1 x) = {!   !}
-ex3' (case2 x) = {!   !}
+ex3' (case1 x) = {!   !} --不可能
+ex3' (case2 x) = {!   !} --不可能
 
 ex4' : {A B : Set} → ( A ∧ B ) →   A ∨ B   
 ex4' ⟪ a , b ⟫ = (case1 a)
@@ -71,10 +71,15 @@ module tmp ( Cat Dog Goat Rabbit : Set ) (p :  PetResearch  Cat Dog Goat Rabbit 
        lemma1 (case2 goat) = ¬goat goat
 
     problem1 : Goat → ¬ Dog
-    problem1 = {!!}
- 
+    problem1 g d = ( fact1 p (case2 d) ) g 
+
     problem2 : Goat → Rabbit
-    problem2 = {!!}
+    problem2 g with lem Cat
+    ... | case1 cat = ⊥-elim ((fact1 p (case1 cat)) g)
+    ... | case2 ¬cat = lemma2 (fact2 p ¬cat) where
+      lemma2 : (Dog ∨ Rabbit) → Rabbit
+      lemma2 (case1 dog) = ⊥-elim ((fact1 p (case2 dog)) g)
+      lemma2 (case2 rabbit) = rabbit
 
 
 data Nat : Set where
@@ -134,7 +139,10 @@ dag :  { V : Set } ( E : V -> V -> Set ) →  Set
 dag {V} E =  ∀ (n : V)  →  ¬ ( connected E n n )
 
 lemma : ¬ (dag 3Ring )
-lemma r = {!   !}
+lemma  = λ f →
+   let c : connected 3Ring t1 t1
+       c = indirect r1 (indirect r2 (direct r3))
+   in f t1 c
 
 --   t1 → t2 → t3
 --
@@ -143,7 +151,9 @@ data 3Line : (dom cod : Three) → Set where
    line2 : 3Line t2 t3
 
 lemma1 : dag 3Line
-lemma1 = {!   !}
+lemma1 t1 (direct ())
+lemma1 t1 (indirect line1 (direct()))
+lemma1 t1 (indirect line1 (indirect line2 (direct ())))
 
 
 
